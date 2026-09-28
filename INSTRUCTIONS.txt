@@ -1,0 +1,64 @@
+Your web panel is correctly coded, but it is blank because of browser security rules. To see your panel work, you must serve it using a simple local web server.
+
+Here are the step-by-step instructions:
+
+**Step 1: Open Command Prompt**
+
+*   Click your Windows Start button.
+*   Type `cmd` and press Enter. A black command prompt window will open.
+
+**Step 2: Navigate to the Web Panel Directory**
+
+*   In the command prompt window, you need to change the directory to where your web panel files are located.
+*   Copy the following command exactly as it is:
+
+      cd "C:\Users\Admin\Desktop\xHERO Panel\xHERO Web Panel"
+
+*   Paste it into the command prompt window and press Enter.
+
+**Step 3: Start the Local Web Server**
+
+*   Now, type the following command into the same window and press Enter:
+
+      python -m http.server 8000
+
+*   You may see a message like "Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/)". This means the server is running. Do not close this window.
+
+**Step 4: View Your Panel**
+
+*   Open your web browser (Chrome, Firefox, etc.).
+*   In the address bar, go to the following URL:
+
+      http://localhost:8000
+
+*   Your xHERO Control Panel will now load correctly and display your list of devices.
+
+--- 
+
+**If you get an error in Step 3:**
+If it says `'python' is not recognized...`, try this command instead:
+
+`py -m http.server 8000`
+
+---
+
+Firebase setup (optional but recommended)
+
+If you want the panel to authenticate using your own Firebase project (recommended), create a non-committed file named `private-config.js` in the same folder as `index.html` with the following content:
+
+```javascript
+// private-config.js — DO NOT commit this file to source control
+export const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "your-project.firebaseapp.com",
+      databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+      projectId: "your-project",
+      storageBucket: "your-project.appspot.com",
+      messagingSenderId: "...",
+      appId: "..."
+};
+```
+
+Replace the values with your Firebase project's configuration (available from the Firebase console -> Project settings). The app will load this file if present; otherwise it will fall back to an embedded placeholder config.
+
+Note: I removed a previous guard in the app that forced an immediate sign-out unless a local "remember" flag existed. With that change, signing in with Firebase email/password will sign you in normally. Use the login form on the page and, if you want persistence between sessions, check "Remember this device".

