@@ -4831,3 +4831,133 @@ body[data-theme="lumen"] .loader-text {
 @media(max-width:900px){.sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:18px 0 60px rgba(0,0,0,.45)}body.sidebar-open .sidebar{transform:translateX(0)}body.sidebar-open::after{content:'';position:fixed;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(3px);z-index:90}.mobile-menu-toggle{display:inline-flex}.topbar{padding:0 18px}.operator-chip{display:none}}
 @media(max-width:520px){.topbar{height:64px;flex-basis:64px;padding:0 12px}.page-context-kicker{display:none}.page-context strong{font-size:15px}.topbar-actions{gap:6px}.topbar-icon-button,.mobile-menu-toggle{width:38px;height:38px}}
 @media(prefers-reduced-motion:reduce){.topbar-icon-button,.mobile-menu-toggle,.sidebar{transition:none}}
+
+
+/* =========================================================
+   UI polish pass 2 — layout safety, responsive cards, controls
+   ========================================================= */
+html { overflow-x: hidden; }
+body { overflow-x: hidden; }
+.main-container { min-height: 100vh; width: 100%; }
+.sidebar { overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; }
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(66,133,244,.28); border-radius: 99px; }
+
+.topbar { flex-shrink: 0; }
+.content-area { width: 100%; box-sizing: border-box; overflow-x: hidden; }
+.content-area > * { max-width: 100%; box-sizing: border-box; }
+
+.topbar-icon-button:focus-visible,
+.mobile-menu-toggle:focus-visible,
+.sidebar-nav li:focus-visible,
+.theme-gear:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.sidebar-nav li {
+    margin-left: 8px;
+    margin-right: 8px;
+    border-radius: 10px;
+    transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.sidebar-nav li:hover { transform: translateX(2px); }
+.sidebar-nav li.active { box-shadow: inset 3px 0 0 var(--accent-blue); }
+
+.theme-switcher { position: relative; z-index: 110; }
+
+.device-card,
+.stat-card,
+.dashboard-card,
+.client-card,
+.panel-card {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.device-card:hover {
+    transform: translateY(-2px);
+}
+
+table {
+    max-width: 100%;
+}
+.table-container,
+.table-wrapper,
+.data-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+button, input, select, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+
+.modal-overlay { padding: 16px; box-sizing: border-box; }
+.modal-content,
+.confirm-modal-content {
+    max-width: min(920px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.lightbox-frame {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+}
+
+@media (max-width: 1100px) {
+    .topbar { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-width: 900px) {
+    .main-container { display: block !important; }
+    .workspace-shell { width: 100%; }
+    .content-area { padding-left: 16px; padding-right: 16px; }
+    .sidebar { width: min(290px, 86vw); }
+}
+
+@media (max-width: 640px) {
+    .content-area { padding-left: 12px; padding-right: 12px; }
+    .topbar-icon-button[aria-label="Search"] { display: none; }
+
+    .modal-overlay { padding: 10px; }
+    .modal-content,
+    .confirm-modal-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100vh - 20px);
+        border-radius: 14px;
+    }
+
+    .device-card { width: 100%; }
+    .control-toolbar { width: 100%; }
+    .control-toolbar > * { flex: 1 1 auto; min-width: 110px; }
+
+    .screen-view {
+        width: min(320px, calc(100vw - 42px));
+        height: min(640px, calc(100vh - 150px));
+    }
+}
+
+@media (max-width: 420px) {
+    .topbar-left { min-width: 0; }
+    .page-context { min-width: 0; }
+    .page-context strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+    .topbar-actions { margin-left: auto; }
+    .content-area { padding-left: 10px; padding-right: 10px; }
+}
+
+/* Reduce accidental desktop hover behavior on touch screens */
+@media (hover: none) {
+    .sidebar-nav li:hover,
+    .device-card:hover,
+    .topbar-icon-button:hover,
+    .mobile-menu-toggle:hover { transform: none; }
+}
+
+/* Keep the dashboard usable when browser text is enlarged */
+@media (min-width: 901px) {
+    .workspace-shell { min-width: 0; }
+}
