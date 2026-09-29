@@ -2090,6 +2090,47 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function escapeSmsHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        }[char]));
+    }
+
+    function formatSmsTime(value, detailed = false) {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const diffMs = Math.max(0, now.getTime() - date.getTime());
+        const diffMinutes = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMinutes / 60);
+        if (detailed) {
+            if (date.toDateString() === now.toDateString()) return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            const yesterday = new Date(startOfToday);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (date.toDateString() === yesterday.toDateString()) return 'Yesterday at ' + date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            return date.toLocaleString([], { month: 'short', day: 'numeric', year: date.getFullYear() === now.getFullYear() ? undefined : 'numeric', hour: 'numeric', minute: '2-digit' });
+        }
+        if (date.toDateString() === now.toDateString()) {
+            if (diffMinutes < 1) return 'Just now';
+            if (diffMinutes < 60) return diffMinutes + ' min ago';
+            return diffHours + ' hr' + (diffHours === 1 ? '' : 's') + ' ago';
+        }
+        const yesterday = new Date(startOfToday);
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+        const daysAgo = Math.floor((startOfToday.getTime() - startOfDate.getTime()) / 86400000);
+        if (daysAgo >= 0 && daysAgo < 7) return date.toLocaleDateString([], { weekday: 'short' });
+        return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: date.getFullYear() === now.getFullYear() ? undefined : 'numeric' });
+    }
+
+    function parseSmsData(data) {
+        const parts = String(data ?? '').split(' | ');
+        return { timestamp: parts[0] || 'N/A', body: parts.slice(1).join(' | ') || 'N/A' };
+    }
+
     function openContactsModal(deviceKey, deviceName, user) {
         const modal = document.getElementById('data-modal');
         document.getElementById('data-modal-title').textContent = `Contacts for ${deviceName}`;
