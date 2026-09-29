@@ -4840,3 +4840,95 @@ body[data-theme="lumen"] .loader-text {
 .sms-native-composer{position:absolute;left:0;right:0;bottom:0;height:52px;box-sizing:border-box;display:grid;grid-template-columns:32px 1fr 32px;align-items:center;gap:5px;padding:6px 10px;background:rgba(255,255,255,.96);border-top:1px solid #d1d1d6}.sms-compose-icon,.sms-send-native{border:0;background:transparent;color:#007aff;display:grid;place-items:center;cursor:pointer}.sms-compose-icon i{font-size:25px}.sms-native-composer #sms-recipient{display:none}.sms-native-composer #sms-message-text{width:100%;height:34px;box-sizing:border-box;border:1px solid #c7c7cc;border-radius:18px;background:#fff;outline:0;padding:0 12px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;font-size:14px;color:#111}.sms-native-composer #sms-message-text:focus{border-color:#007aff;box-shadow:0 0 0 1px #007aff}.sms-send-native{width:30px;height:30px;border-radius:50%;background:#007aff;color:#fff}.sms-send-native i{font-size:17px}.sms-send-native:disabled{opacity:.4}.sms-home-indicator{position:absolute;z-index:10;bottom:5px;left:50%;width:115px;height:4px;transform:translateX(-50%);border-radius:99px;background:#111;pointer-events:none}
 .sms-empty-phone{position:absolute;inset:105px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif}.sms-empty-icon{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#d1d1d6;color:#fff}.sms-empty-icon i{font-size:34px}.sms-empty-phone h3{margin:14px 0 4px;font-size:20px}.sms-empty-phone p{margin:0;color:#8e8e93;font-size:14px;line-height:1.4}.sms-phone-loading{padding:60px;text-align:center;color:#8e8e93;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif}
 @media(max-width:600px){.sms-phone-mode{padding:0!important}.sms-device{width:100%;height:100%;min-height:620px;border:0;border-radius:0;padding:0;box-shadow:none}.sms-device-speaker{display:none}.sms-screen{border-radius:0}.sms-status-bar{padding-top:10px}.sms-home-indicator{display:none}}
+
+/* SMS dark mode: keep the phone UI consistent with the dashboard */
+
+body:not([data-theme="lumen"]) .sms-phone-mode {
+    background: var(--bg-main) !important;
+    color: var(--text-primary) !important;
+}
+body:not([data-theme="lumen"]) .sms-device {
+    background: #080a0e;
+    border-color: #20242b;
+    box-shadow: 0 28px 70px rgba(0,0,0,.65), inset 0 0 0 2px #171b22;
+}
+body:not([data-theme="lumen"]) .sms-screen {
+    background: #0b0e13;
+    color: var(--text-primary);
+}
+body:not([data-theme="lumen"]) .sms-status-bar {
+    color: var(--text-primary);
+}
+body:not([data-theme="lumen"]) .sms-app-nav,
+body:not([data-theme="lumen"]) .sms-native-composer {
+    background: rgba(13,15,18,.96);
+    border-color: var(--border-color);
+}
+body:not([data-theme="lumen"]) .sms-native-search {
+    background: #0d0f12;
+    border-color: var(--border-color);
+}
+body:not([data-theme="lumen"]) .sms-native-search input {
+    background: #1a1e24;
+    color: var(--text-primary);
+}
+body:not([data-theme="lumen"]) .sms-native-search input::placeholder {
+    color: var(--text-secondary);
+}
+body:not([data-theme="lumen"]) .sms-contact-title strong,
+body:not([data-theme="lumen"]) .sms-native-thread-copy strong,
+body:not([data-theme="lumen"]) .sms-native-bubble .sms-body {
+    color: var(--text-primary);
+}
+body:not([data-theme="lumen"]) .sms-contact-title small,
+body:not([data-theme="lumen"]) .sms-native-thread-copy span,
+body:not([data-theme="lumen"]) .sms-native-thread-meta,
+body:not([data-theme="lumen"]) .sms-native-bubble time,
+body:not([data-theme="lumen"]) .sms-thread-empty,
+body:not([data-theme="lumen"]) .sms-native-no-threads {
+    color: var(--text-secondary);
+}
+body:not([data-theme="lumen"]) .sms-native-thread-list {
+    background: var(--bg-secondary);
+}
+body:not([data-theme="lumen"]) .sms-native-thread {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+body:not([data-theme="lumen"]) .sms-native-thread:active {
+    background: rgba(66,133,244,.08);
+}
+body:not([data-theme="lumen"]) .sms-native-messages {
+    background: var(--bg-main);
+    background-image: radial-gradient(rgba(255,255,255,.025) .6px, transparent .6px);
+}
+body:not([data-theme="lumen"]) .sms-native-bubble {
+    background: #1f242c;
+    color: var(--text-primary);
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+body:not([data-theme="lumen"]) .sms-native-composer #sms-message-text {
+    background: #171b21;
+    color: var(--text-primary);
+    border-color: #303640;
+}
+body:not([data-theme="lumen"]) .sms-native-composer #sms-message-text::placeholder {
+    color: var(--text-secondary);
+}
+body:not([data-theme="lumen"]) .sms-native-composer #sms-message-text:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 1px var(--accent-blue);
+}
+body:not([data-theme="lumen"]) .sms-delete-button {
+    background: #2a2f38;
+    color: var(--text-secondary);
+}
+body:not([data-theme="lumen"]) .sms-empty-phone {
+    background: var(--bg-main);
+    color: var(--text-primary);
+}
+body:not([data-theme="lumen"]) .sms-empty-phone p,
+body:not([data-theme="lumen"]) .sms-phone-loading {
+    color: var(--text-secondary);
+}
