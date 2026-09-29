@@ -2026,6 +2026,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>`;
 
+                // Keep the SMS thread in native message order: oldest at the top, newest at the bottom.
+                // Always start the conversation scrolled to the newest message.
+                const messagesView = modalBody.querySelector('.sms-native-messages');
+                if (messagesView) {
+                    requestAnimationFrame(() => {
+                        messagesView.scrollTop = messagesView.scrollHeight;
+                    });
+                }
+
                 const backButton = modalBody.querySelector('.sms-back-button');
                 backButton?.addEventListener('click', () => {
                     showThreadList = false;
