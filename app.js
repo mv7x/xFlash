@@ -1921,7 +1921,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             let activeAddress = entries[0]?.address || '';
-            let showThreadList = false;
+            let showThreadList = entries.length > 0 ? true : false;
 
             const render = () => {
                 const active = entries.find(item => item.address === activeAddress) || entries[0];
@@ -1989,7 +1989,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
 
                             <div class="sms-app-nav">
-                                <button class="sms-back-button" type="button" aria-label="Messages" style="${showThreadList ? '' : 'visibility:hidden'}">
+                                <button class="sms-back-button" type="button" aria-label="Messages" style="${showThreadList ? 'visibility:hidden' : ''}">
                                     <i class="material-icons">chevron_left</i><span>Messages</span>
                                 </button>
                                 <div class="sms-contact-title">
