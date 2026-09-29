@@ -2037,7 +2037,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const backButton = modalBody.querySelector('.sms-back-button');
                 backButton?.addEventListener('click', () => {
-                    showThreadList = false;
+                    showThreadList = true;
                     render();
                 });
 
