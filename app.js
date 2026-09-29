@@ -1921,77 +1921,129 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             let activeAddress = entries[0]?.address || '';
+            let showThreadList = false;
 
             const render = () => {
                 const active = entries.find(item => item.address === activeAddress) || entries[0];
+                const activeNumber = active?.address?.replace(/_/g, '.') || '';
+                const displayName = activeNumber || 'New Message';
+
                 if (!active && !activeAddress) {
                     modalBody.innerHTML = `
-                        <div class="sms-phone">
-                            <div class="sms-phone-topbar"><div><span class="sms-phone-kicker">MESSAGES</span><strong>${escapeSmsHtml(deviceName)}</strong></div><span class="sms-phone-signal">● ● ●</span></div>
-                            <div class="sms-empty-phone"><i class="material-icons">sms</i><h3>No messages</h3><p>This device has no SMS conversations yet.</p></div>
+                        <div class="sms-device">
+                            <div class="sms-device-speaker"></div>
+                            <div class="sms-screen">
+                                <div class="sms-status-bar">
+                                    <span>9:41</span>
+                                    <span class="sms-status-icons"><i class="material-icons">signal_cellular_alt</i><i class="material-icons">wifi</i><i class="material-icons">battery_full</i></span>
+                                </div>
+                                <div class="sms-app-nav">
+                                    <span class="sms-nav-title">Messages</span>
+                                </div>
+                                <div class="sms-empty-phone">
+                                    <div class="sms-empty-icon"><i class="material-icons">chat_bubble</i></div>
+                                    <h3>No Messages</h3>
+                                    <p>No SMS conversations were found on this device.</p>
+                                </div>
+                            </div>
                         </div>`;
                     return;
                 }
 
                 const conversationList = entries.map(item => {
                     const last = item.latest || {};
-                    const selected = item.address === active?.address ? ' is-selected' : '';
                     return `
-                        <button class="sms-thread-item${selected}" data-sms-thread="${escapeSmsHtml(item.address)}">
-                            <span class="sms-thread-avatar"><i class="material-icons">person</i></span>
-                            <span class="sms-thread-copy">
+                        <button class="sms-native-thread" data-sms-thread="${escapeSmsHtml(item.address)}">
+                            <span class="sms-native-avatar"><i class="material-icons">person</i></span>
+                            <span class="sms-native-thread-copy">
                                 <strong>${escapeSmsHtml(item.address.replace(/_/g, '.'))}</strong>
-                                <span>${escapeSmsHtml(last.body || 'No preview')}</span>
+                                <span>${escapeSmsHtml(last.body || 'Message')}</span>
                             </span>
-                            <span class="sms-thread-time">${escapeSmsHtml(formatSmsTime(last.timestamp))}</span>
+                            <span class="sms-native-thread-meta"><time>${escapeSmsHtml(formatSmsTime(last.timestamp))}</time><i class="material-icons">chevron_right</i></span>
                         </button>`;
                 }).join('');
 
-                const bubbles = (active?.messages || []).map(msg => `
-                    <div class="sms-message-row sms-message-in">
-                        <div class="sms-phone-bubble">
-                            <div class="sms-body">${escapeSmsHtml(msg.body)}</div>
-                            <time>${escapeSmsHtml(formatSmsTime(msg.timestamp, true))}</time>
-                            <button class="sms-delete-button" title="Delete message" data-address="${escapeSmsHtml(active.address)}" data-message-id="${escapeSmsHtml(msg.id)}"><i class="material-icons">more_horiz</i></button>
-                        </div>
-                    </div>`).join('');
+                const bubbles = (active?.messages || []).map((msg, index) => {
+                    const isLatest = index === (active.messages.length - 1);
+                    return `
+                        <div class="sms-native-row sms-native-in">
+                            <div class="sms-native-bubble">
+                                <div class="sms-body">${escapeSmsHtml(msg.body)}</div>
+                                <time>${escapeSmsHtml(formatSmsTime(msg.timestamp, true))}</time>
+                                <button class="sms-delete-button" title="Delete message" data-address="${escapeSmsHtml(active.address)}" data-message-id="${escapeSmsHtml(msg.id)}"><i class="material-icons">more_horiz</i></button>
+                            </div>
+                        </div>`;
+                }).join('');
 
                 modalBody.innerHTML = `
-                    <div class="sms-phone">
-                        <aside class="sms-thread-list">
-                            <div class="sms-list-header">
-                                <div><span class="sms-phone-kicker">MESSAGES</span><h3>${escapeSmsHtml(deviceName)}</h3></div>
-                                <span class="sms-count">${entries.length}</span>
+                    <div class="sms-device">
+                        <div class="sms-device-speaker"></div>
+                        <div class="sms-screen">
+                            <div class="sms-status-bar">
+                                <span>9:41</span>
+                                <span class="sms-status-icons">
+                                    <i class="material-icons">signal_cellular_alt</i>
+                                    <i class="material-icons">wifi</i>
+                                    <i class="material-icons">battery_full</i>
+                                </span>
                             </div>
-                            <div class="sms-search"><i class="material-icons">search</i><input type="search" placeholder="Search conversations"></div>
-                            <div class="sms-thread-scroll">${conversationList || '<div class="sms-no-threads">No conversations</div>'}</div>
-                        </aside>
-                        <section class="sms-thread-view">
-                            <header class="sms-thread-header">
-                                <div class="sms-contact-avatar"><i class="material-icons">person</i></div>
-                                <div><strong>${escapeSmsHtml(active?.address?.replace(/_/g, '.') || 'Messages')}</strong><span>SMS conversation</span></div>
-                                <span class="sms-header-status">●</span>
-                            </header>
-                            <div class="sms-messages-scroll">${bubbles || '<div class="sms-thread-empty">Select a conversation</div>'}</div>
-                            <form class="sms-composer" id="sms-composer">
-                                <input id="sms-recipient" type="text" value="${escapeSmsHtml(active?.address?.replace(/_/g, '.') || '')}" placeholder="Phone number" autocomplete="off">
-                                <input id="sms-message-text" type="text" placeholder="Message" autocomplete="off">
-                                <button id="sms-send-button" type="submit" aria-label="Send message"><i class="material-icons">send</i></button>
+
+                            <div class="sms-app-nav">
+                                <button class="sms-back-button" type="button" aria-label="Messages" style="${showThreadList ? '' : 'visibility:hidden'}">
+                                    <i class="material-icons">chevron_left</i><span>Messages</span>
+                                </button>
+                                <div class="sms-contact-title">
+                                    <span class="sms-native-contact-avatar"><i class="material-icons">person</i></span>
+                                    <strong>${escapeSmsHtml(displayName)}</strong>
+                                    <small>SMS</small>
+                                </div>
+                                <button class="sms-nav-action" type="button" aria-label="Contact information"><i class="material-icons">info_outline</i></button>
+                            </div>
+
+                            <div class="sms-native-search ${showThreadList ? '' : 'sms-hidden'}">
+                                <i class="material-icons">search</i>
+                                <input type="search" placeholder="Search" autocomplete="off">
+                            </div>
+
+                            <div class="sms-native-content ${showThreadList ? 'is-list' : 'is-thread'}">
+                                <div class="sms-native-thread-list">
+                                    ${conversationList || '<div class="sms-native-no-threads">No conversations</div>'}
+                                </div>
+                                <div class="sms-native-messages">
+                                    <div class="sms-message-spacer"></div>
+                                    ${bubbles || '<div class="sms-thread-empty">No messages in this conversation.</div>'}
+                                </div>
+                            </div>
+
+                            <form class="sms-native-composer ${showThreadList ? 'sms-hidden' : ''}" id="sms-composer">
+                                <button type="button" class="sms-compose-icon" aria-label="Add"><i class="material-icons">add_circle_outline</i></button>
+                                <input id="sms-recipient" type="text" value="${escapeSmsHtml(activeNumber)}" aria-label="Recipient" autocomplete="off">
+                                <input id="sms-message-text" type="text" placeholder="Text Message" autocomplete="off">
+                                <button id="sms-send-button" class="sms-send-native" type="submit" aria-label="Send message"><i class="material-icons">arrow_upward</i></button>
                             </form>
-                        </section>
+
+                            <div class="sms-home-indicator"></div>
+                        </div>
                     </div>`;
+
+                const backButton = modalBody.querySelector('.sms-back-button');
+                backButton?.addEventListener('click', () => {
+                    showThreadList = false;
+                    render();
+                });
 
                 modalBody.querySelectorAll('[data-sms-thread]').forEach(button => {
                     button.addEventListener('click', () => {
                         activeAddress = button.dataset.smsThread;
+                        showThreadList = false;
                         render();
                     });
                 });
 
-                const search = modalBody.querySelector('.sms-search input');
+                const search = modalBody.querySelector('.sms-native-search input');
                 search?.addEventListener('input', () => {
                     const queryText = search.value.trim().toLowerCase();
-                    modalBody.querySelectorAll('.sms-thread-item').forEach(item => {
+                    modalBody.querySelectorAll('.sms-native-thread').forEach(item => {
                         item.style.display = item.textContent.toLowerCase().includes(queryText) ? '' : 'none';
                     });
                 });
@@ -2021,6 +2073,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         const newCommandRef = push(commandRef);
                         set(newCommandRef, { type: 'deleteSms', messageId: button.dataset.messageId });
                     });
+                });
+
+                // The conversation list is opened by tapping the native Messages title.
+                modalBody.querySelector('.sms-contact-title')?.addEventListener('click', () => {
+                    showThreadList = true;
+                    render();
                 });
             };
 
