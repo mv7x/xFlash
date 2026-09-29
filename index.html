@@ -87,7 +87,7 @@
     </div>
 
     <div class="main-container" id="panel-shell">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
                     <span class="logo-letter" data-letter="x">x</span>
@@ -126,10 +126,35 @@
             </nav>
         </aside>
 
-        <main class="content-area" id="main-content-area">
-            <!-- Content will be injected by JavaScript -->
-        </main>
-    </div>
+        <div class="workspace-shell">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
+                        <i class="material-icons">menu</i>
+                    </button>
+                    <div class="page-context">
+                        <span class="page-context-kicker">xHERO CONTROL</span>
+                        <strong id="topbar-page-title">Clients</strong>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <button class="topbar-icon-button" type="button" aria-label="Search">
+                        <i class="material-icons">search</i>
+                    </button>
+                    <button class="topbar-icon-button notification-topbar" type="button" aria-label="Notifications">
+                        <i class="material-icons">notifications_none</i>
+                        <span></span>
+                    </button>
+                    <div class="operator-chip">
+                        <span class="operator-status"></span>
+                        <div><strong>Operator</strong><small>Secure session</small></div>
+                    </div>
+                </div>
+            </header>
+            <main class="content-area" id="main-content-area">
+                <!-- Content will be injected by JavaScript -->
+            </main>
+        </div>    </div>
 
     <!-- Modal for Data Viewing -->
     <div class="modal-overlay" id="data-modal" style="display:none;">
@@ -201,6 +226,12 @@
             });
         }
     </script>
+        <script>
+            const mobileMenuToggle=document.getElementById('mobile-menu-toggle');
+            mobileMenuToggle?.addEventListener('click',()=>{const open=document.body.classList.toggle('sidebar-open');mobileMenuToggle.setAttribute('aria-expanded',String(open));mobileMenuToggle.querySelector('.material-icons').textContent=open?'close':'menu';});
+            document.getElementById('sidebar')?.addEventListener('click',event=>{if(event.target.closest('.sidebar-nav li')){document.body.classList.remove('sidebar-open');mobileMenuToggle?.setAttribute('aria-expanded','false');const icon=mobileMenuToggle?.querySelector('.material-icons');if(icon)icon.textContent='menu';}});
+            document.addEventListener('click',event=>{if(document.body.classList.contains('sidebar-open')&&!event.target.closest('.sidebar')&&!event.target.closest('.mobile-menu-toggle')){document.body.classList.remove('sidebar-open');mobileMenuToggle?.setAttribute('aria-expanded','false');const icon=mobileMenuToggle?.querySelector('.material-icons');if(icon)icon.textContent='menu';}});
+        </script>
 </body>
 
 </html>
