@@ -401,10 +401,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function navigateTo(page, user) {
-        const mainContentArea = document.getElementById('main-content-area');
-        const icon = getPageIcon(page);
+        const mainContentArea = document.getElementById('main-page-content');
         const title = PAGE_TITLES[page] || (page.charAt(0).toUpperCase() + page.slice(1));
-        mainContentArea.innerHTML = `<header class="content-header"><h1><i class="material-icons">${icon}</i> ${title}</h1></header><div id="page-content"></div>`;
+        const headerTitle = document.getElementById('panel-header-page-title');
+        if (headerTitle) headerTitle.textContent = title;
+        mainContentArea.innerHTML = '<div id="page-content"></div>';
         const pageContent = document.getElementById('page-content');
 
         switch (page) {
@@ -1900,95 +1901,146 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openSmsModal(deviceKey, deviceName, user) {
         const modal = document.getElementById('data-modal');
-        document.getElementById('data-modal-title').textContent = `SMS for ${deviceName}`;
+        document.getElementById('data-modal-title').textContent = '';
         const modalBody = document.getElementById('data-modal-body');
-        modalBody.innerHTML = '<p>Loading...</p>';
-        setModalBodyMode();
+        setModalBodyMode('sms-phone-mode');
+        modalBody.innerHTML = '<div class="sms-phone-loading">Loading messages...</div>';
         modal.style.display = 'flex';
+
         const dataRef = ref(database, `users/${user.uid}/devices/${deviceKey}/sms`);
 
         onValue(dataRef, (snapshot) => {
-            modalBody.innerHTML = '';
-
-            const sendForm = document.createElement('div');
-            sendForm.className = 'sms-send-form';
-            sendForm.innerHTML = `
-                <textarea id="sms-message-text" placeholder="Type a message..."></textarea>
-                <input type="text" id="sms-recipient" placeholder="Recipient phone number">
-                <button id="sms-send-button">Send</button>
-            `;
-            modalBody.appendChild(sendForm);
-
-            document.getElementById('sms-send-button').addEventListener('click', () => {
-                const messageText = document.getElementById('sms-message-text').value;
-                const recipient = document.getElementById('sms-recipient').value;
-                if (messageText && recipient) {
-                    const commandRef = ref(database, `users/${user.uid}/devices/${deviceKey}/commands`);
-                    const newCommandRef = push(commandRef);
-                    set(newCommandRef, { type: 'sendsms', recipient, message: messageText });
-                    document.getElementById('sms-message-text').value = '';
-                }
+            const conversations = snapshot.val() || {};
+            const entries = Object.entries(conversations).map(([address, messages]) => {
+                const messageList = Object.entries(messages || {}).map(([id, data]) => ({ id, ...parseSmsData(data) }));
+                messageList.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                const latest = messageList[messageList.length - 1];
+                return { address, messages: messageList, latest };
+            }).filter(item => item.messages.length > 0).sort((a, b) => {
+                return new Date(b.latest?.timestamp || 0) - new Date(a.latest?.timestamp || 0);
             });
 
-            const conversations = snapshot.val();
-            if (conversations) {
-                const smsContainer = document.createElement('div');
-                smsContainer.className = 'sms-container';
+            let activeAddress = entries[0]?.address || '';
 
-                const sortedConversations = Object.entries(conversations).map(([address, messages]) => {
-                    const messageList = Object.entries(messages).map(([id, data]) => ({ id, ...parseSmsData(data) }));
-                    const latestMessage = messageList.reduce((latest, msg) => (new Date(msg.timestamp) > new Date(latest.timestamp)) ? msg : latest, messageList[0]);
-                    return { address, messages: messageList, latestTimestamp: new Date(latestMessage.timestamp) };
-                }).sort((a, b) => {
-                    const aIsLetter = /^[a-zA-Z]/.test(a.address);
-                    const bIsLetter = /^[a-zA-Z]/.test(b.address);
-                    if (aIsLetter && !bIsLetter) return -1;
-                    if (!aIsLetter && bIsLetter) return 1;
-                    return b.latestTimestamp - a.latestTimestamp;
-                });
+            const render = () => {
+                const active = entries.find(item => item.address === activeAddress) || entries[0];
+                if (!active && !activeAddress) {
+                    modalBody.innerHTML = `
+                        <div class="sms-phone">
+                            <div class="sms-phone-topbar"><div><span class="sms-phone-kicker">MESSAGES</span><strong>${escapeSmsHtml(deviceName)}</strong></div><span class="sms-phone-signal">● ● ●</span></div>
+                            <div class="sms-empty-phone"><i class="material-icons">sms</i><h3>No messages</h3><p>This device has no SMS conversations yet.</p></div>
+                        </div>`;
+                    return;
+                }
 
-                sortedConversations.forEach(({ address, messages }) => {
-                    const conversationDiv = document.createElement('div');
-                    conversationDiv.className = 'sms-conversation';
-                    conversationDiv.innerHTML = `<div class="sms-header"><strong>From:</strong> ${address.replace(/_/g, '.')}</div>`;
+                const conversationList = entries.map(item => {
+                    const last = item.latest || {};
+                    const selected = item.address === active?.address ? ' is-selected' : '';
+                    return `
+                        <button class="sms-thread-item${selected}" data-sms-thread="${escapeSmsHtml(item.address)}">
+                            <span class="sms-thread-avatar"><i class="material-icons">person</i></span>
+                            <span class="sms-thread-copy">
+                                <strong>${escapeSmsHtml(item.address.replace(/_/g, '.'))}</strong>
+                                <span>${escapeSmsHtml(last.body || 'No preview')}</span>
+                            </span>
+                            <span class="sms-thread-time">${escapeSmsHtml(formatSmsTime(last.timestamp))}</span>
+                        </button>`;
+                }).join('');
 
-                    const messagesDiv = document.createElement('div');
-                    messagesDiv.className = 'sms-messages';
+                const bubbles = (active?.messages || []).map(msg => `
+                    <div class="sms-message-row sms-message-in">
+                        <div class="sms-phone-bubble">
+                            <div class="sms-body">${escapeSmsHtml(msg.body)}</div>
+                            <time>${escapeSmsHtml(formatSmsTime(msg.timestamp, true))}</time>
+                            <button class="sms-delete-button" title="Delete message" data-address="${escapeSmsHtml(active.address)}" data-message-id="${escapeSmsHtml(msg.id)}"><i class="material-icons">more_horiz</i></button>
+                        </div>
+                    </div>`).join('');
 
-                    messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                modalBody.innerHTML = `
+                    <div class="sms-phone">
+                        <aside class="sms-thread-list">
+                            <div class="sms-list-header">
+                                <div><span class="sms-phone-kicker">MESSAGES</span><h3>${escapeSmsHtml(deviceName)}</h3></div>
+                                <span class="sms-count">${entries.length}</span>
+                            </div>
+                            <div class="sms-search"><i class="material-icons">search</i><input type="search" placeholder="Search conversations"></div>
+                            <div class="sms-thread-scroll">${conversationList || '<div class="sms-no-threads">No conversations</div>'}</div>
+                        </aside>
+                        <section class="sms-thread-view">
+                            <header class="sms-thread-header">
+                                <div class="sms-contact-avatar"><i class="material-icons">person</i></div>
+                                <div><strong>${escapeSmsHtml(active?.address?.replace(/_/g, '.') || 'Messages')}</strong><span>SMS conversation</span></div>
+                                <span class="sms-header-status">●</span>
+                            </header>
+                            <div class="sms-messages-scroll">${bubbles || '<div class="sms-thread-empty">Select a conversation</div>'}</div>
+                            <form class="sms-composer" id="sms-composer">
+                                <input id="sms-recipient" type="text" value="${escapeSmsHtml(active?.address?.replace(/_/g, '.') || '')}" placeholder="Phone number" autocomplete="off">
+                                <input id="sms-message-text" type="text" placeholder="Message" autocomplete="off">
+                                <button id="sms-send-button" type="submit" aria-label="Send message"><i class="material-icons">send</i></button>
+                            </form>
+                        </section>
+                    </div>`;
 
-                    messages.forEach(msg => {
-                        const messageBubble = document.createElement('div');
-                        messageBubble.className = 'sms-bubble';
-                        messageBubble.innerHTML = `
-                            <div class="sms-body">${msg.body}</div>
-                            <div class="sms-footer">${msg.timestamp}</div>
-                            <button class="sms-delete-button" data-address="${address}" data-message-id="${msg.id}"><i class="material-icons">delete</i></button>
-                        `;
-                        messagesDiv.appendChild(messageBubble);
+                modalBody.querySelectorAll('[data-sms-thread]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        activeAddress = button.dataset.smsThread;
+                        render();
                     });
-                    conversationDiv.appendChild(messagesDiv);
-                    smsContainer.appendChild(conversationDiv);
                 });
 
-                modalBody.appendChild(smsContainer);
+                const search = modalBody.querySelector('.sms-search input');
+                search?.addEventListener('input', () => {
+                    const queryText = search.value.trim().toLowerCase();
+                    modalBody.querySelectorAll('.sms-thread-item').forEach(item => {
+                        item.style.display = item.textContent.toLowerCase().includes(queryText) ? '' : 'none';
+                    });
+                });
 
-                modalBody.addEventListener('click', (e) => {
-                    const deleteButton = e.target.closest('.sms-delete-button');
-                    if (deleteButton) {
-                        const messageId = deleteButton.dataset.messageId;
+                const composer = modalBody.querySelector('#sms-composer');
+                composer?.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const messageText = modalBody.querySelector('#sms-message-text')?.value.trim();
+                    const recipient = modalBody.querySelector('#sms-recipient')?.value.trim();
+                    if (!messageText || !recipient) return;
+                    const button = modalBody.querySelector('#sms-send-button');
+                    button.disabled = true;
+                    try {
                         const commandRef = ref(database, `users/${user.uid}/devices/${deviceKey}/commands`);
                         const newCommandRef = push(commandRef);
-                        set(newCommandRef, { type: 'deleteSms', messageId });
+                        await set(newCommandRef, { type: 'sendsms', recipient, message: messageText });
+                        const input = modalBody.querySelector('#sms-message-text');
+                        if (input) input.value = '';
+                    } finally {
+                        button.disabled = false;
                     }
                 });
 
-            } else {
-                const noSmsMessage = document.createElement('p');
-                noSmsMessage.textContent = 'No SMS data found.';
-                modalBody.appendChild(noSmsMessage);
-            }
+                modalBody.querySelectorAll('.sms-delete-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const commandRef = ref(database, `users/${user.uid}/devices/${deviceKey}/commands`);
+                        const newCommandRef = push(commandRef);
+                        set(newCommandRef, { type: 'deleteSms', messageId: button.dataset.messageId });
+                    });
+                });
+            };
+
+            render();
         });
+    }
+
+    function escapeSmsHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        }[char]));
+    }
+
+    function formatSmsTime(value, detailed = false) {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return detailed
+            ? date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+            : date.toLocaleDateString([], { month: 'short', day: 'numeric' });
     }
 
     function parseSmsData(data) {
