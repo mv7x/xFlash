@@ -4932,3 +4932,344 @@ body:not([data-theme="lumen"]) .sms-empty-phone p,
 body:not([data-theme="lumen"]) .sms-phone-loading {
     color: var(--text-secondary);
 }
+
+
+/* =========================
+   SMS UX AUDIT — native panel
+   ========================= */
+
+.sms-phone-mode {
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--bg-main) !important;
+}
+
+.sms-device {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--bg-main);
+    box-shadow: none;
+}
+
+.sms-device-speaker,
+.sms-status-bar,
+.sms-home-indicator {
+    display: none !important;
+}
+
+.sms-screen {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border-radius: 0;
+    background: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.sms-app-nav {
+    position: relative;
+    height: 64px;
+    padding: 0 18px;
+    grid-template-columns: 1fr auto;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+.sms-list-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -.02em;
+}
+
+.sms-list-nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sms-thread-nav {
+    grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr);
+    gap: 12px;
+}
+
+.sms-thread-nav .sms-contact-title {
+    justify-self: center;
+}
+
+.sms-thread-nav .sms-back-button {
+    justify-self: start;
+}
+
+.sms-nav-spacer {
+    width: 100%;
+}
+
+.sms-back-button {
+    min-width: 78px;
+    height: 38px;
+    gap: 1px;
+    padding: 0;
+    color: var(--accent-blue);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.sms-back-button i {
+    font-size: 27px;
+    margin-left: -5px;
+}
+
+.sms-nav-action {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    justify-content: center;
+    color: var(--accent-blue);
+}
+
+.sms-nav-action:hover {
+    background: rgba(66, 133, 244, .10);
+}
+
+.sms-contact-title {
+    gap: 1px;
+}
+
+.sms-contact-title strong {
+    max-width: 260px;
+    color: var(--text-primary);
+    font-size: 15px;
+}
+
+.sms-contact-title small {
+    color: var(--text-secondary);
+}
+
+.sms-native-search {
+    height: 52px;
+    padding: 8px 16px;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sms-native-search input {
+    height: 36px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+}
+
+.sms-native-content {
+    position: absolute;
+    top: 64px;
+    bottom: 0;
+    background: var(--bg-main);
+}
+
+.sms-native-content.is-list {
+    top: 116px;
+}
+
+.sms-native-thread-list {
+    background: var(--bg-main);
+}
+
+.sms-native-thread {
+    min-height: 76px;
+    padding: 10px 16px;
+    gap: 12px;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    transition: background .15s ease;
+}
+
+.sms-native-thread:hover {
+    background: rgba(127, 127, 127, .07);
+}
+
+.sms-native-thread.is-active {
+    background: rgba(66, 133, 244, .08);
+}
+
+.sms-native-avatar {
+    width: 44px;
+    height: 44px;
+    background: var(--border-color);
+    flex: 0 0 44px;
+}
+
+.sms-native-thread-copy {
+    gap: 4px;
+}
+
+.sms-native-thread-copy strong {
+    color: var(--text-primary);
+    font-size: 15px;
+}
+
+.sms-native-thread-copy span {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.sms-native-thread-meta {
+    min-width: 74px;
+    justify-content: flex-end;
+    color: var(--text-secondary);
+}
+
+.sms-native-thread-meta i {
+    display: none;
+}
+
+.sms-native-messages {
+    padding: 20px 22px 24px;
+    gap: 7px;
+    background: var(--bg-main);
+    background-image: none;
+}
+
+.sms-native-row {
+    width: 100%;
+}
+
+.sms-native-bubble {
+    max-width: min(680px, 78%);
+    padding: 9px 13px 7px;
+    border-radius: 17px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+.sms-native-bubble .sms-body {
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.sms-native-bubble time {
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.sms-delete-button {
+    right: -9px;
+    top: -9px;
+    opacity: 0;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.sms-native-bubble:hover .sms-delete-button,
+.sms-delete-button:focus-visible {
+    opacity: 1;
+}
+
+.sms-native-composer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 64px;
+    padding: 10px 16px;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 8px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.sms-native-composer #sms-message-text {
+    height: 42px;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 21px;
+    font-size: 14px;
+}
+
+.sms-native-composer #sms-message-text:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 1px var(--accent-blue);
+}
+
+.sms-send-native {
+    width: 36px;
+    height: 36px;
+    align-self: center;
+    background: var(--accent-blue);
+}
+
+.sms-send-native i {
+    font-size: 18px;
+}
+
+.sms-thread-empty,
+.sms-native-no-threads,
+.sms-phone-loading {
+    color: var(--text-secondary);
+}
+
+.sms-empty-phone {
+    inset: 64px 0 0;
+    background: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.sms-empty-icon {
+    background: var(--border-color);
+}
+
+@media (max-width: 700px) {
+    .sms-app-nav {
+        height: 58px;
+        padding: 0 12px;
+    }
+
+    .sms-list-title {
+        font-size: 21px;
+    }
+
+    .sms-native-content {
+        top: 58px;
+    }
+
+    .sms-native-content.is-list {
+        top: 110px;
+    }
+
+    .sms-thread-nav {
+        grid-template-columns: minmax(80px, 1fr) auto minmax(40px, 1fr);
+    }
+
+    .sms-native-thread {
+        padding: 10px 12px;
+    }
+
+    .sms-native-thread-meta {
+        min-width: auto;
+        font-size: 10px;
+    }
+
+    .sms-native-messages {
+        padding: 14px 12px 18px;
+    }
+
+    .sms-native-bubble {
+        max-width: 86%;
+    }
+
+    .sms-native-composer {
+        padding: 8px 10px;
+    }
+}
