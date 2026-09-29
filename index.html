@@ -228,6 +228,14 @@
     </script>
         <script>
             const mobileMenuToggle=document.getElementById('mobile-menu-toggle');
+            // Keep the shell title synchronized with the active page.
+            const pageTitleEl=document.getElementById('topbar-page-title');
+            const pageNames={clients:'Clients',notifications:'Notifications',connections:'Connections',builder:'Builder',dropper:'Custom Dropper',injector:'Pulse Injector',blocked:'Blocked',updates:'Updates',profile:'Profile'};
+            const syncPageTitle=()=>{const active=document.querySelector('.sidebar-nav li.active[data-page]');if(active&&pageTitleEl)pageTitleEl.textContent=pageNames[active.dataset.page]||active.textContent.trim();};
+            syncPageTitle();
+            document.querySelector('.sidebar-nav')?.addEventListener('click',()=>setTimeout(syncPageTitle,0));
+            document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('sidebar-open')){document.body.classList.remove('sidebar-open');mobileMenuToggle?.setAttribute('aria-expanded','false');const icon=mobileMenuToggle?.querySelector('.material-icons');if(icon)icon.textContent='menu';}});
+            document.querySelector('.topbar-icon-button[aria-label="Search"]')?.addEventListener('click',()=>{const input=document.querySelector('input[type="search"], input[placeholder*="Search" i], input[placeholder*="search" i]');input?.focus();input?.scrollIntoView({behavior:'smooth',block:'center'});});
             mobileMenuToggle?.addEventListener('click',()=>{const open=document.body.classList.toggle('sidebar-open');mobileMenuToggle.setAttribute('aria-expanded',String(open));mobileMenuToggle.querySelector('.material-icons').textContent=open?'close':'menu';});
             document.getElementById('sidebar')?.addEventListener('click',event=>{if(event.target.closest('.sidebar-nav li')){document.body.classList.remove('sidebar-open');mobileMenuToggle?.setAttribute('aria-expanded','false');const icon=mobileMenuToggle?.querySelector('.material-icons');if(icon)icon.textContent='menu';}});
             document.addEventListener('click',event=>{if(document.body.classList.contains('sidebar-open')&&!event.target.closest('.sidebar')&&!event.target.closest('.mobile-menu-toggle')){document.body.classList.remove('sidebar-open');mobileMenuToggle?.setAttribute('aria-expanded','false');const icon=mobileMenuToggle?.querySelector('.material-icons');if(icon)icon.textContent='menu';}});
